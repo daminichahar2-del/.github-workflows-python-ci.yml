@@ -1,0 +1,74 @@
+python-actions-demo/
+│
+├── calculator.py
+├── requirements.txt
+├── tests/
+│   └── test_calculator.py
+└── .github/
+    └── workflows/
+        └── python-ci.yml
+def add(a, b):
+    return a + b
+
+def subtract(a, b):
+    return a - b
+
+def multiply(a, b):
+    return a * b
+
+def divide(a, b):
+    if b == 0:
+        raise ValueError("Cannot divide by zero")
+    return a / b
+pytest
+flake8
+import pytest
+import calculator
+
+def test_add():
+    assert calculator.add(2, 3) == 5
+
+def test_subtract():
+    assert calculator.subtract(10, 5) == 5
+
+def test_multiply():
+    assert calculator.multiply(4, 3) == 12
+
+def test_divide():
+    assert calculator.divide(10, 2) == 5
+
+def test_divide_by_zero():
+    with pytest.raises(ValueError):
+        calculator.divide(5, 0)
+name: Python CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: pytest
+
+    - name: Code style check
+      run: flake8 .
+
